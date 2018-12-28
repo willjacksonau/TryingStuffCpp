@@ -2,3 +2,5 @@
 bin/*.exe
 *.exe
 build/*.o
+lib/googletest-release-1.8.1
+lib/libgtest.a
