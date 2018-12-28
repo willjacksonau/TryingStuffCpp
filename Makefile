@@ -18,13 +18,6 @@ INC_FILES := $(wildcard $(IDIR)/*.h)
 CXX := g++
 CXXFLAGS := -I$(IDIR)
 
-# macro DEPS, which is the set of .h files on which the .cpp files depend
-# _DEPS := $(wildcard $(IDIR)/*.h)
-# DEPS := $(patsubst %,$(IDIR)/%,$(_DEPS))
-
-# _OBJ := $(wildcard $(ODIR)/*.o)
-# OBJ := $(patsubst %,$(ODIR)/%,$(_OBJ))
-
 # we define a rule that applies to all files ending in the .o suffix.
 # The rule says that the .o file depends upon the .cpp version of the file and the .h files included in the DEPS macro.
 # The rule then says that to generate the .o file, make needs to compile the .c file using the compiler defined in the CC macro.
