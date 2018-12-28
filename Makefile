@@ -5,6 +5,9 @@ IDIR := include
 LDIR := lib
 SDIR := src
 TDIR := test
+GTESTIDIR := lib/googletest-release-1.8.1/googletest/include
+GTESTDIR := lib/googletest-release-1.8.1/googletest
+GTESTSDIR := lib/googletest-release-1.8.1/googletest/src
 
 # include libraries such as math library below
 # LIBS = -lm
@@ -13,6 +16,10 @@ TDIR := test
 SRC_FILES := $(wildcard $(SDIR)/*.cpp)
 OBJ_FILES := $(patsubst $(SDIR)/%.cpp,$(ODIR)/%.o,$(SRC_FILES))
 INC_FILES := $(wildcard $(IDIR)/*.h)
+#the test files themselves
+TEST_FILES := $(wildcard $(TDIR)/*.cpp)
+#the src files that need to be tested
+TEST_SRC_FILES := $(filter-out $(SDIR)/main.cpp, $(wildcard $(SDIR)/*.cpp))
 
 #flags for compiling etc
 CXX := g++
@@ -28,6 +35,20 @@ $(ODIR)/%.o: $(SDIR)/%.cpp $(INC_FILES)
 
 hellomake: $(OBJ_FILES)
 	$(CXX) -o $(BDIR)/$@ $^ $(CXXFLAGS) $(LIBS)
+
+#this will create the libgtest.a library to use for linking your test to. It is located under lib directory.
+.PHONY: testlibrary
+
+testlibrary:
+	$(CXX) -I$(GTESTIDIR) -I$(GTESTDIR) -c $(GTESTSDIR)/gtest_main.cc -o $(ODIR)/gtest_main.o
+	$(CXX) -I$(GTESTIDIR) -I$(GTESTDIR) -c $(GTESTSDIR)/gtest-all.cc -o $(ODIR)/gtest-all.o
+	ar -rv $(LDIR)/libgtest.a $(ODIR)/gtest_main.o $(ODIR)/gtest-all.o
+
+.PHONY: test
+
+#this will compile all of the test files with all src files to be tested
+test:
+	g++ -I$(GTESTIDIR) -I$(IDIR) -pthread $(TEST_FILES) $(TEST_SRC_FILES) $(INC_FILES) $(LDIR)/libgtest.a -o $(BDIR)/my_cool_test
 
 .PHONY: clean
 
